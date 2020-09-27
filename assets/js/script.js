@@ -220,8 +220,40 @@ var dragTaskHandler = function (event) {
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
     var getId = event.dataTransfer.getData("text/plain");
-    console.log("getId:", getId, typeof getId);
-}
+};
+
+
+var dropZoneDragHandler = function (event) {
+    var taskListEl = event.target.closest(".task-list");
+    if (taskListEl) {
+        event.preventDefault();
+    }
+};
+
+
+var dropTaskHandler = function (event) {
+    // retrieve the task id previously stored in the dataTransfer attribute and save it as id
+    var id = event.dataTransfer.getData("text/plain");
+    // variable to define the draggable element that matches the id retreived from the dataTransfer attribute
+    var draggableElement = document.querySelector("[data-task-id='" + id + "']");
+    // variable to define the element that matches the .task-list attribute in the target
+    var dropZoneEl = event.target.closest(".task-list");
+    // variabe to define status of dragged task element after dropping by getting the id of the dropZoneEl
+    var statusType = dropZoneEl.id;
+    // set status of task based on dropZone id
+    var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+    if (statusType === "tasks-to-do") {
+        statusSelectEl.selectedIndex = 0;
+    }
+    else if (statusType === "tasks-in-progress") {
+        statusSelectEl.selectedIndex = 1;
+    }
+    else if (statusType === "tasks-completed") {
+        statusSelectEl.selectedIndex = 2;
+    }
+    // append draggableElement to the dropZoneEL
+    dropZoneEl.appendChild(draggableElement);
+};
 
 // listen for click on the page-content element and call taskButtonhandler function
 pageContentEl.addEventListener("click", taskButtonHandler);
@@ -231,3 +263,9 @@ pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
 // listen for dragastart event on page-content element and call function dragTaskhandler
 pageContentEl.addEventListener("dragstart", dragTaskHandler);
+
+// listen for dragover event on page-content element and call fucntion dropZoneHandler
+pageContentEl.addEventListener("dragover", dropZoneDragHandler);
+
+// listen for drop event on page-content element and call function dropTaskHandler
+pageContentEl.addEventListener("drop", dropTaskHandler);
