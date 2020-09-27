@@ -1,3 +1,6 @@
+// variable to find and hold DOM element page-content
+var pageContentEl = document.querySelector("#page-content");
+
 // create unique id for each task
 var taskIdCounter = 0;
 
@@ -112,3 +115,20 @@ var createTaskActions = function (taskId) {
 
 
 formEl.addEventListener("submit", taskFormHandler);
+
+var taskButtonHandler = function (event) {
+
+    if (event.target.matches(".delete-btn")) {
+        // get the element's task id
+        var taskId = event.target.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+};
+
+
+var deleteTask = function (taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    taskSelected.remove();
+};
+
+pageContentEl.addEventListener("click", taskButtonHandler);
